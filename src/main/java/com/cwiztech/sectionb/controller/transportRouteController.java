@@ -75,6 +75,8 @@ public class transportRouteController {
 		String rtnAPIResponse = "Invalid Response";
 		JSONObject jsonTransportRoute = new JSONObject(data);
 		
+		TransportRoute transportroute = new TransportRoute();
+
 		if (!jsonTransportRoute.has("transportroute_CODE") || jsonTransportRoute.isNull("transportroute_CODE"))
 		{
 			return "transportroute_CODE is missing!";
@@ -90,19 +92,25 @@ public class transportRouteController {
 			return "routetype_ID is missing!";
 		}
 
-		TransportRoute transportroute = new TransportRoute();
 		transportroute.setTRANSPORTROUTE_CODE(jsonTransportRoute.getString("transportroute_CODE"));
 		transportroute.setTRANSPORTROUTE_DESC(jsonTransportRoute.getString("transportroute_DESC"));
 		transportroute.setROUTETYPE_ID(jsonTransportRoute.getLong("routetype_ID"));
 		
-		if (jsonTransportRoute.has("color_ID") && !jsonTransportRoute.isNull("color_ID"))
-			transportroute.setCOLOUR_ID(jsonTransportRoute.getLong("color_ID"));
+		if (jsonTransportRoute.has("colour_ID") && !jsonTransportRoute.isNull("colour_ID"))
+			transportroute.setCOLOUR_ID(jsonTransportRoute.getLong("colour_ID"));
 		
 		transportroute.setISACTIVE(jsonTransportRoute.getString("isactive"));
 		
 		transportroute = transportrouterepository.saveAndFlush(transportroute);
 		rtnAPIResponse = mapper.writeValueAsString(transportroute);
 		return rtnAPIResponse;
-
 	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	private TransportRoute delete(@PathVariable long id) {
+		TransportRoute transportroute = transportrouterepository.findOne(id);
+		transportrouterepository.delete(transportroute);
+		return transportroute;
+	}
+
 }
